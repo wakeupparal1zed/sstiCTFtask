@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Campaigns | Orbit Mail{% endblock %}
+{% block content %}
+<section class="panel reveal page-head">
+  <div>
+    <h1>Campaigns</h1>
+    <p>Stored templates are rendered asynchronously by the simulator worker.</p>
+  </div>
+  <a class="btn" href="{{ url_for('campaigns_new') }}">New campaign</a>
+</section>
+
+<section class="panel reveal">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Subject</th>
+        <th>Created</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in campaigns %}
+      <tr>
+        <td>#{{ c.id }}</td>
+        <td>{{ c.title }}</td>
+        <td>{{ c.subject }}</td>
+        <td>{{ c.created_at }}</td>
+        <td><a href="{{ url_for('campaign_view', campaign_id=c.id) }}">Open</a></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5">No campaigns yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

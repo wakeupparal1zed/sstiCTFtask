@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Knowledge Base | Orbit Mail{% endblock %}
+{% block content %}
+<section class="panel reveal page-head">
+  <div>
+    <h1>Knowledge base</h1>
+    <p>Search internal docs, template snippets, and runbook notes.</p>
+  </div>
+</section>
+
+<section class="panel reveal">
+  <form method="get" class="search-row">
+    <input type="text" name="q" value="{{ query }}" placeholder="Search docs (e.g. Mako)">
+    <button class="btn" type="submit">Search</button>
+  </form>
+
+  <div class="kb-grid">
+    {% for a in articles %}
+    <article class="kb-item">
+      <h3>{{ a.title }}</h3>
+      <p>{{ a.body }}</p>
+      <small>{{ a.created_at }}</small>
+    </article>
+    {% else %}
+    <p>No results.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

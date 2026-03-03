@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard | Orbit Mail{% endblock %}
+{% block content %}
+<section class="hero panel reveal">
+  <div>
+    <h1>Growth Operations Workspace</h1>
+    <p>Build campaigns, run deliverability simulations, track support tickets, and inspect system health from one console.</p>
+  </div>
+  <div class="hero-badges">
+    <span class="chip">Template rendering enabled</span>
+    <span class="chip">Worker queue enabled</span>
+    <span class="chip">Preview before send</span>
+  </div>
+</section>
+
+<section class="stats-grid reveal">
+  <article class="panel stat-card">
+    <h3>{{ stats.campaigns }}</h3>
+    <p>Campaigns</p>
+  </article>
+  <article class="panel stat-card">
+    <h3>{{ stats.jobs }}</h3>
+    <p>Render Jobs</p>
+  </article>
+  <article class="panel stat-card">
+    <h3>{{ stats.tickets }}</h3>
+    <p>Support Tickets</p>
+  </article>
+  <article class="panel stat-card">
+    <h3>{{ stats.queued }}</h3>
+    <p>Queued / Running</p>
+  </article>
+</section>
+
+<section class="feature-grid reveal">
+  <article class="panel feature">
+    <h2>Email Studio</h2>
+    <p>Create dynamic campaign templates and run QA rendering jobs before production delivery.</p>
+    <a class="btn" href="{{ url_for('campaigns_new') }}">Create campaign</a>
+  </article>
+  <article class="panel feature">
+    <h2>Support Desk</h2>
+    <p>Track incidents around SMTP health, DNS setup, and customer complaints in a single queue.</p>
+    <a class="btn ghost" href="{{ url_for('tickets') }}">Open tickets</a>
+  </article>
+  <article class="panel feature">
+    <h2>Playbook KB</h2>
+    <p>Search runbooks and implementation notes for workers, template syntax and deployment guides.</p>
+    <a class="btn ghost" href="{{ url_for('kb') }}">Browse KB</a>
+  </article>
+</section>
+{% endblock %}

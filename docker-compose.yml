@@ -1,0 +1,39 @@
+services:
+  web:
+    build: .
+    container_name: ssti_mako_web
+    network_mode: host
+    environment:
+      - REDIS_HOST=127.0.0.1
+      - REDIS_PORT=6380
+      - DB_PATH=/data/app.db
+      - FLAG=practice{y3t_4n0th3r_sst1_9}
+      - PORT=1337
+    depends_on:
+      - redis
+    volumes:
+      - app-data:/data
+
+  worker:
+    build: .
+    container_name: ssti_mako_worker
+    network_mode: host
+    command: ["python", "-m", "app.worker"]
+    environment:
+      - REDIS_HOST=127.0.0.1
+      - REDIS_PORT=6380
+      - DB_PATH=/data/app.db
+      - FLAG=practice{y3t_4n0th3r_sst1_9}
+    depends_on:
+      - redis
+    volumes:
+      - app-data:/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: ssti_mako_redis
+    network_mode: host
+    command: ["redis-server", "--port", "6380"]
+
+volumes:
+  app-data:

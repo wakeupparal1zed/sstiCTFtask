@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}System Status | Orbit Mail{% endblock %}
+{% block content %}
+<section class="panel reveal page-head">
+  <div>
+    <h1>System status</h1>
+    <p>Live service health overview and queue telemetry.</p>
+  </div>
+</section>
+
+<section class="panel reveal">
+  <div class="status-grid">
+    <article>
+      <h3>API</h3>
+      <p class="status {{ info.api }}">{{ info.api }}</p>
+    </article>
+    <article>
+      <h3>Worker</h3>
+      <p class="status {{ info.worker }}">{{ info.worker }}</p>
+    </article>
+    <article>
+      <h3>SMTP</h3>
+      <p class="status {{ info.smtp }}">{{ info.smtp }}</p>
+    </article>
+    <article>
+      <h3>Redis queue len</h3>
+      <p>{{ info.redis_queue_len }}</p>
+    </article>
+    <article>
+      <h3>Queued jobs in DB</h3>
+      <p>{{ info.queued_jobs }}</p>
+    </article>
+  </div>
+</section>
+{% endblock %}

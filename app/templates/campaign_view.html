@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Campaign #{{ campaign.id }} | Orbit Mail{% endblock %}
+{% block content %}
+<section class="panel reveal page-head">
+  <div>
+    <h1>{{ campaign.title }} <span class="muted">#{{ campaign.id }}</span></h1>
+    <p>Subject: <strong>{{ campaign.subject }}</strong></p>
+  </div>
+  <a class="btn ghost" href="{{ url_for('campaigns') }}">Back to list</a>
+</section>
+
+<section class="two-col reveal">
+  <article class="panel">
+    <h2>Template source</h2>
+    <p class="muted">Stored source rendered by background worker (Mako).</p>
+    <pre class="code-box">{{ campaign.body_template }}</pre>
+  </article>
+
+  <article class="panel">
+    <h2>Run deliverability simulation</h2>
+    <p>This creates a render job in queue and executes it with demo recipient context.</p>
+    <form method="post" action="{{ url_for('campaign_simulate', campaign_id=campaign.id) }}" class="stack-form">
+      <label>Target inbox
+        <input type="email" name="target_email" value="qa@orbit.local" required>
+      </label>
+      <button class="btn" type="submit">Start simulation</button>
+    </form>
+  </article>
+</section>
+{% endblock %}

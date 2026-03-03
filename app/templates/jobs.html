@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Render Queue | Orbit Mail{% endblock %}
+{% block content %}
+<section class="panel reveal page-head">
+  <div>
+    <h1>Render queue</h1>
+    <p>Worker picks jobs from Redis and stores rendered output in the jobs table.</p>
+  </div>
+</section>
+
+<section class="panel reveal">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Job</th>
+        <th>Campaign</th>
+        <th>Target</th>
+        <th>Status</th>
+        <th>Created</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for job in jobs %}
+      <tr>
+        <td><a href="{{ url_for('job_view', job_id=job.id) }}">#{{ job.id }}</a></td>
+        <td>{{ job.campaign_title }}</td>
+        <td>{{ job.target_email }}</td>
+        <td><span class="status {{ job.status }}">{{ job.status }}</span></td>
+        <td>{{ job.created_at }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5">No jobs yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Support Tickets | Orbit Mail{% endblock %}
+{% block content %}
+<section class="panel reveal page-head">
+  <div>
+    <h1>Support tickets</h1>
+    <p>Operational issues and customer-facing incidents.</p>
+  </div>
+</section>
+
+<section class="two-col reveal">
+  <article class="panel">
+    <h2>Create ticket</h2>
+    <form method="post" class="stack-form">
+      <label>Title
+        <input type="text" name="title" required>
+      </label>
+      <label>Details
+        <textarea name="details" rows="7" required></textarea>
+      </label>
+      <button class="btn" type="submit">Submit</button>
+    </form>
+  </article>
+
+  <article class="panel">
+    <h2>Recent tickets</h2>
+    <div class="ticket-list">
+      {% for t in tickets %}
+      <article class="ticket-item">
+        <header>
+          <strong>#{{ t.id }} {{ t.title }}</strong>
+          <span class="status {{ t.status }}">{{ t.status }}</span>
+        </header>
+        <p>{{ t.details }}</p>
+      </article>
+      {% else %}
+      <p>No tickets yet.</p>
+      {% endfor %}
+    </div>
+  </article>
+</section>
+{% endblock %}

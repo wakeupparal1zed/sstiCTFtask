@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Job #{{ job.id }} | Orbit Mail{% endblock %}
+{% block content %}
+<section class="panel reveal page-head">
+  <div>
+    <h1>Render Job #{{ job.id }}</h1>
+    <p>Campaign: <strong>{{ job.campaign_title }}</strong> | target: {{ job.target_email }}</p>
+  </div>
+  <div class="status-box">
+    <span class="status {{ job.status }}">{{ job.status }}</span>
+  </div>
+</section>
+
+<section class="two-col reveal">
+  <article class="panel">
+    <h2>Rendered output</h2>
+    <pre class="code-box">{{ job.output or 'No output yet.' }}</pre>
+  </article>
+
+  <article class="panel">
+    <h2>Execution info</h2>
+    <p><strong>Created:</strong> {{ job.created_at }}</p>
+    <p><strong>Updated:</strong> {{ job.updated_at }}</p>
+    <p><strong>Error:</strong></p>
+    <pre class="code-box">{{ job.error or 'none' }}</pre>
+    <a class="btn ghost" href="{{ url_for('jobs') }}">Back to queue</a>
+  </article>
+</section>
+{% endblock %}

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>{% block title %}Orbit Mail Control Center{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <div class="bg-orb bg-orb-a"></div>
+    <div class="bg-orb bg-orb-b"></div>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">OM</span>
+        <div>
+          <strong>Orbit Mail</strong>
+          <p>Campaign Control Center</p>
+        </div>
+      </div>
+      <nav>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('campaigns') }}">Campaigns</a>
+        <a href="{{ url_for('jobs') }}">Render Queue</a>
+        <a href="{{ url_for('tickets') }}">Tickets</a>
+        <a href="{{ url_for('kb') }}">Knowledge Base</a>
+        <a href="{{ url_for('status') }}">System Status</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>
