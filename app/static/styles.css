@@ -93,6 +93,7 @@ nav {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
+  align-items: center;
 }
 
 nav a {
@@ -114,6 +115,11 @@ nav a:hover {
   margin: 1.5rem auto 3rem;
   display: grid;
   gap: 1rem;
+}
+
+.flash-stack {
+  display: grid;
+  gap: 0.65rem;
 }
 
 .panel {
@@ -213,6 +219,10 @@ nav a:hover {
   color: var(--text);
 }
 
+.btn-small {
+  padding: 0.45rem 0.75rem;
+}
+
 .btn:hover {
   filter: brightness(1.05);
 }
@@ -251,6 +261,15 @@ textarea {
 .error {
   color: var(--danger);
   margin-top: 0;
+}
+
+.flash {
+  margin: 0;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid rgba(111, 246, 162, 0.28);
+  border-radius: 12px;
+  background: rgba(111, 246, 162, 0.08);
+  color: #c8ffd9;
 }
 
 .data-table {
@@ -320,6 +339,51 @@ textarea {
   gap: 0.7rem;
 }
 
+.inline-form {
+  margin: 0;
+  display: inline-flex;
+}
+
+.inline-form button {
+  font: inherit;
+}
+
+.nav-user {
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.auth-shell {
+  min-height: calc(100vh - 170px);
+  display: grid;
+  place-items: center;
+}
+
+.auth-panel {
+  width: min(460px, 100%);
+  padding: 1.4rem;
+}
+
+.auth-panel h1 {
+  margin-top: 0;
+  margin-bottom: 0.4rem;
+}
+
+.auth-form {
+  margin-top: 1rem;
+}
+
+.auth-alt {
+  margin-bottom: 0;
+}
+
+.auth-alt a {
+  color: #82f5ff;
+}
+
 .status {
   display: inline-block;
   border-radius: 999px;
@@ -387,6 +451,10 @@ textarea {
 @media (max-width: 640px) {
   .topbar {
     padding: 0.7rem;
+  }
+
+  nav {
+    width: 100%;
   }
 
   nav a {

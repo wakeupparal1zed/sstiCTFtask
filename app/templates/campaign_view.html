@@ -20,6 +20,7 @@
     <h2>Run deliverability simulation</h2>
     <p>This creates a render job in queue and executes it with demo recipient context.</p>
     <form method="post" action="{{ url_for('campaign_simulate', campaign_id=campaign.id) }}" class="stack-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
       <label>Target inbox
         <input type="email" name="target_email" value="qa@orbit.local" required>
       </label>

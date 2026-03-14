@@ -12,6 +12,7 @@
   <article class="panel">
     <h2>Create ticket</h2>
     <form method="post" class="stack-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
       <label>Title
         <input type="text" name="title" required>
       </label>

@@ -14,6 +14,7 @@
     <p class="error">{{ error }}</p>
   {% endif %}
   <form method="post" class="stack-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <label>Campaign title
       <input type="text" name="title" placeholder="Q2 Feature Launch" required>
     </label>

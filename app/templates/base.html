@@ -18,16 +18,35 @@
         </div>
       </div>
       <nav>
+        {% if current_user %}
+        <span class="nav-user">{{ current_user.username }}</span>
         <a href="{{ url_for('dashboard') }}">Dashboard</a>
         <a href="{{ url_for('campaigns') }}">Campaigns</a>
         <a href="{{ url_for('jobs') }}">Render Queue</a>
         <a href="{{ url_for('tickets') }}">Tickets</a>
         <a href="{{ url_for('kb') }}">Knowledge Base</a>
         <a href="{{ url_for('status') }}">System Status</a>
+        <form method="post" action="{{ url_for('logout') }}" class="inline-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button type="submit" class="btn ghost btn-small">Logout</button>
+        </form>
+        {% else %}
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('register') }}">Register</a>
+        {% endif %}
       </nav>
     </header>
 
     <main class="container">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <section class="flash-stack">
+            {% for message in messages %}
+            <p class="flash">{{ message }}</p>
+            {% endfor %}
+          </section>
+        {% endif %}
+      {% endwith %}
       {% block content %}{% endblock %}
     </main>
   </body>
